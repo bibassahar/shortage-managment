@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% load bootstrap_icons %}
+{% block content %}
+<div class="row"> 
+  <ul class="pagination justify-content-end pull-left col-6 offset-6">
+    {% if   records.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ records.previous_page_number }}">
+              <i class="fa fa-chevron-left" aria-hidden="true"></i>
+            </a>
+          </li>
+    {% endif %}
+    {% if records.number|add:'-5' > 1 %}
+        <li class="page-item" >
+          <a class="page-link" href="?page={{ records.number|add:'-5' }}">&hellip;</a>
+        </li>
+    {% endif %}
+    {% for i in records.paginator.page_range %}
+        {% if records.number == i %}
+            <li class="page-link">
+              <span>{{ i }} 
+                <span class="sr-only">(current)</span>
+              </span>
+            </li>
+        {% elif i > records.number|add:'-5' and i < records.number|add:'5' %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+            </li>
+        {% endif %}
+    {% endfor %} 
+    {% if records.paginator.num_pages > records.number|add:'5' %}
+        <li>
+          <a class="page-link" href="?page={{ records.number|add:'5' }}">&hellip;</a>
+        </li>
+    {% endif %}
+    {% if records.has_next %}
+        <li>
+          <a class="page-link" href="?page={{ records.next_page_number }}"><i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+        </li>
+    {% endif %}
+
+  </ul> 
+            <div class="col-md-12">
+                <div class="card card-shadow" >
+                    <div class="card-header">
+                         <h3 class="card-title">Overview</h3>
+                         <div class="card-tools">
+                              <button type="button" class="btn btn-tool" data-card-widget="maximize">
+                                <i class="fas fa-expand"></i>
+                              </button>
+                              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                              </button>
+                            </div>
+                    </div>
+                    <div class="card-body">
+                      <div style='overflow:auto;width:100%'>
+                          <table class="table table-hover table-sm table-bordered  table-responsive{-sm|-md|-lg|-xl}" style='white-space:nowrap;' id="table">
+                                  <thead>
+                                      <tr>
+                                      <th scope="col">View all</th>
+                                      <th scope="col">ID</th>
+                                      <th scope="col">Material</th>
+                                      <th scope="col">Division</th>
+                                      <th scope="col">Mrp Area</th>
+                                      <th scope="col">Profit Center</th>
+                                      <th scope="col">Purchase group designation</th>
+                                      <th scope="col">Scope Allocation</th>
+                                      <th scope="col">Allocated Supplier</th>
+                                      <th scope="col">Core Id</th>
+                                      <th scope="col">Core Status</th>
+                                      <th scope="col">Missig Status</th>
+                                      <th scope="col">Action</th>
+                                      </tr>
+                                  </thead>
+                              <tbody >
+                                      {% for data in records %}
+                                      <tr>
+                                        <td>
+                                          <button type="button" class="btn btn-primary-outline" 
+                                          data-dpr='{{data.dpr}}'  
+                                          data-tyar='{{data.tyar}}'
+                                          data-mp='{{data.mp}}'
+                                          data-a_s='{{data.a_s}}'
+                                          data-typ='{{data.typ}}'
+                                          data-mrp_element='{{data.mrp_element}}'
+                                          data-delivery_qty='{{data.delivery_qty}}'
+                                          data-num_parcel='{{data.num_parcel}}'
+                                          data-warehouse_stock='{{data.warehouse_stock}}'
+                                          data-workshop_stock='{{data.workshop_stock}}'
+                                          data-stock_zpush='{{data.stock_zpush}}'
+                                          data-stock_quality='{{data.stock_quality}}'
+                                          data-other_stocks='{{data.other_stocks}}'
+                                          data-ongoing_po='{{data.ongoing_po}}'
+                                          {% comment %} data-validated_delivery_date='{{data.validated_delivery_date}}'
+                                           {% endcomment %}
+                                          {% comment %} data-confirmed_quantity='{{data.confirmed_quantity}}' {% endcomment %}
+                                          {% comment %} data-vendor_name='{{data.vendor_name}}' {% endcomment %}
+                                          data-toggle="modal" data-target="#viewall">
+                                            <i class="fa-regular fa-folder-open"></i>
+                                          </button>
+                                        </td>
+                                          <td>{{data.id}}</td>
+                                          <td>{{data.material}}</td>
+                                          <td>{{data.division}}</td>
+                                          <td>{{data.mrp_area}}</td>
+                                          <td>{{data.profit_center_designation}}</td>
+                                          <td>{{data.purchasing_group_designation}}</td>
+                                          <td>{{data.scope_allocation}}</td>
+                                          <td>{{data.vendor}}</td>
+                                          <td>{{data.id_core}}</td>
+                                          <td>{{data.status_core}}</td>
+                                          <td>{{data.missing_status}}</td>  
+                                          <td></td>                                          
+                                          {%empty%}
+                                          <tr><td colspan='15' style='text-align:center'>No Data available</td></tr>      
+                                      {% endfor %}     
+                              </tbody>
+                          </table>
+                      </div>
+                    </div>
+                </div>
+            </div>
+</div>
+<!-- Details Modal -->
+  <div class="modal fade" id="viewall" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">View all</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div style='overflow:auto;width:100%'>
+            <table class="table table-hover table-sm table-bordered  table-responsive{-sm|-md|-lg|-xl}" style='white-space:nowrap;' id="table">
+                    <thead>
+                        <tr>
+                        <th scope="col">Planned delivery time</th>
+                        <th scope="col">Material type</th>
+                        <th scope="col">Material status</th>
+                        <th scope="col">Special Procurement type</th>
+                        <th scope="col">Planification type</th>
+                        <th scope="col">Lot QM</th>
+                        <th scope="col">Stock in transit</th>
+                        <th scope="col">Package number</th>
+                        <th scope="col">Warehouse Stock</th>
+                        <th scope="col">Workshop Stock</th>
+                        <th scope="col">Stock ZPush</th>
+                        <th scope="col">Stock Quality</th>
+                        <th scope="col">Other Stocks</th>             
+                        <th scope="col">Ongoing PO</th>
+                        {% comment %} <th scope="col">Confirmed delivery date</th> {% endcomment %}
+                        {% comment %} <th scope="col">Quantity to receive</th> {% endcomment %}
+                        {% comment %} <th scope="col">Procurement agent</th> {% endcomment %}
+                        {% comment %} <th scope="col">PO Supplier</th> {% endcomment %}
+                        {% comment %} <th scope="col">Date of missing</th>
+                        <th scope="col">Missing status</th>
+                        <th scope="col">Action</th>
+                        <th scope="col">Comment</th>
+                        <th scope="col">Action Status</th>
+                        <th scope="col">Needs in the past</th>
+                        <th scope="col">Backlog PO Qty</th>
+                        <th scope="col">Coverage time</th>
+                        <th scope="col">Week</th>
+                        <th scope="col">Week+x</th> {% endcomment %}
+                        </tr>
+                    </thead>
+                <tbody >
+                    <tr id='datatable'>
+                    </tr>
+                </tbody>
+            </table>
+          </div>
+          {%include 'shortage/kpis/material_coverge_per_week.html'%}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+
+</div>
+  <script >
+    $('#viewall').on('show.bs.modal', function (event) {
+      var dpr = $(event.relatedTarget).data('dpr');
+      var tyar = $(event.relatedTarget).data('tyar');
+      var mp = $(event.relatedTarget).data('mp');
+      var a_s = $(event.relatedTarget).data('a_s');
+      var typ = $(event.relatedTarget).data('typ');
+      var mrp_element = $(event.relatedTarget).data('mrp_element');
+      var delivery_qty = $(event.relatedTarget).data('delivery_qty');
+      var num_parcel  = $(event.relatedTarget).data('num_parcel'); 
+      var warehouse_stock  = $(event.relatedTarget).data('warehouse_stock'); 
+      var workshop_stock  = $(event.relatedTarget).data('workshop_stock'); 
+      var stock_zpush  = $(event.relatedTarget).data('stock_zpush'); 
+      var stock_quality  = $(event.relatedTarget).data('stock_quality'); 
+      var other_stocks  = $(event.relatedTarget).data('other_stocks'); 
+      
+
+      {% comment %} var validated_delivery_date  = $(event.relatedTarget).data('validated_delivery_date'); {% endcomment %}
+      {% comment %} var confirmed_quantity  = $(event.relatedTarget).data('confirmed_quantity '); {% endcomment %}
+      {% comment %} var vendor_name  = $(event.relatedTarget).data('vendor_name '); {% endcomment %}
+      document.getElementById("datatable").innerHTML="<td>"+dpr+"</td><td>"+tyar+"</td><td>"+mp+"</td><td>"+a_s+"</td><td>"+typ+"</td><td>"+mrp_element+"</td><td>"+delivery_qty+"</td><td>"+num_parcel+"</td><td>"+warehouse_stock+"</td><td>"+workshop_stock+"</td><td>"+stock_zpush+"</td><td>"+stock_quality+"</td><td>"+other_stocks+"</td>";
+      
+    });
+  
+   $(document).ready(function(){
+          $('[data-toggle="tooltip"]').tooltip({
+              placement : 'top'
+          });
+      });
+  </script>    
+{% endblock content %}
